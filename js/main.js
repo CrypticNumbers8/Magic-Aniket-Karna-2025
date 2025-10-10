@@ -130,18 +130,46 @@
     });
   })();
 
-  // Handle contact form submission
+  // Handle contact form submission with button animation
   const contactForm = document.getElementById('contactForm');
   if (contactForm) {
+    const submitButton = contactForm.querySelector('button[type="submit"]');
     contactForm.addEventListener('submit', function (e) {
       e.preventDefault();
 
+      if (!submitButton) return;
+
+      // Disable button and show loading spinner
+      submitButton.disabled = true;
+      const originalText = submitButton.innerHTML;
+      submitButton.innerHTML =
+        '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Sending...';
+
       emailjs.sendForm('service_h61jwby', 'template_cvt4f9k', this).then(
         () => {
-          alert('Message sent successfully!✅ Aniket will reach back shortly!');
+          // Success animation
+          submitButton.innerHTML = 'Message Sent!';
+          submitButton.classList.add('btn-success');
+
+          setTimeout(() => {
+            submitButton.innerHTML = originalText;
+            submitButton.classList.remove('btn-success');
+            submitButton.disabled = false;
+          }, 2500);
+
           contactForm.reset();
         },
         (error) => {
+          // Failure animation
+          submitButton.innerHTML = 'Failed ❌';
+          submitButton.classList.add('btn-danger');
+
+          setTimeout(() => {
+            submitButton.innerHTML = originalText;
+            submitButton.classList.remove('btn-danger');
+            submitButton.disabled = false;
+          }, 2500);
+
           alert(
             '❌ Failed to send message. Please try again.\n' +
               JSON.stringify(error)
